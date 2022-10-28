@@ -120,13 +120,14 @@ class Plugin {
 	async download(first) {
 		var scope = this;
 		function register() {
-			jQuery.ajax({
-				url: 'https://blckbn.ch/api/event/install_plugin',
-				type: 'POST',
-				data: {
-					plugin: scope.id
-				}
-			})
+			// Disabled due to CORS
+			// jQuery.ajax({
+			// 	url: 'https://blckbn.ch/api/event/install_plugin',
+			// 	type: 'POST',
+			// 	data: {
+			// 		plugin: scope.id
+			// 	}
+			// })
 		}
 		if (!isApp) {
 			if (first) register();
@@ -417,12 +418,13 @@ Plugins.loading_promise = new Promise((resolve, reject) => {
 	});
 })
 
-$.getJSON('https://blckbn.ch/api/stats/plugins?weeks=2', data => {
-	Plugins.download_stats = data;
-	if (Plugins.json) {
-		Plugins.sort();
-	}
-})
+// Disabled due to CORS
+// $.getJSON('https://blckbn.ch/api/stats/plugins?weeks=2', data => {
+// 	Plugins.download_stats = data;
+// 	if (Plugins.json) {
+// 		Plugins.sort();
+// 	}
+// })
 
 async function loadInstalledPlugins() {
 	if (!Plugins.loading_promise.resolved) {

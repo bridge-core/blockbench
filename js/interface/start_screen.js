@@ -641,13 +641,14 @@ ModelLoader.loaders = {};
 		if (Blockbench.hasFlag('after_update') && data.new_version) {
 			data.new_version.insert_after = 'splash_screen'
 			addStartScreenSection('new_version', data.new_version);
-			jQuery.ajax({
-				url: 'https://blckbn.ch/api/event/successful_update',
-				type: 'POST',
-				data: {
-					version: Blockbench.version
-				}
-			})
+			// Disabled due to CORS
+			// jQuery.ajax({
+			// 	url: 'https://blckbn.ch/api/event/successful_update',
+			// 	type: 'POST',
+			// 	data: {
+			// 		version: Blockbench.version
+			// 	}
+			// })
 		}
 		if (data.psa) {
 			(function() {
