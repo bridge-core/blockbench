@@ -52,6 +52,7 @@
 		<button onclick="isApp ? Blockbench.reload() : window.location.reload(true)" class="large" style="margin-right: auto; margin-left: auto;">Reload</button>
 		<button onclick="window.close()" class="large" style="margin-right: auto; margin-left: auto;">Quit</button>
 	</div>
+		
 		<script src="lib/vue.min.js"></script>
 		<script src="lib/vue_sortable.js"></script>
 		<script src="lib/jquery.js"></script>
@@ -156,7 +157,8 @@
 		<script src="js/io/formats/skin.js"></script>
 		<script src="js/io/formats/image.js"></script>
 		<script src="js/globals.js"></script>
-
+		<script type="module" src="js/bridge.js"></script>
+		
 		<script>if (window.module) module = window.module;</script>
 
 	<div style="display: none;"></div>
