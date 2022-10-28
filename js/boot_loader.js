@@ -68,7 +68,8 @@ if (isApp) {
 	updateRecentProjects()
 }
 
-if (!isApp) {
+// Make sure we don't register a service worker during development
+if (!isApp && !location.hostname.startsWith('localhost')) {
 	async function registerSW() {
 		if ('serviceWorker' in navigator) {
 			try {
