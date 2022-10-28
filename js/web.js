@@ -24,7 +24,11 @@ function initializeWebApp() {
 			</div>`);
 		button.insertBefore('#web_download_button');
 	}
-	if (!Blockbench.isTouch && !Blockbench.isPWA) {
+	// Hide downloadApp button...
+	// 1. On mobile
+	// 2. For PWA users
+	// 3. When Blockbench is embedded into a different tool
+	if (!Blockbench.isTouch && !Blockbench.isPWA && !window.top) {
 		$('#web_download_button').show()
 	}
 
