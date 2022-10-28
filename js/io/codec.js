@@ -124,6 +124,17 @@ class Codec {
 		}
 		this.events[event_name].safePush(cb)
 	}
+	/**
+	 * Listen for an event only once
+	 */
+	once(event_name, cb) {
+		const listener = (data) => {
+			cb(data)
+			this.removeListener(event_name, listener)
+		}
+		this.on(event_name, listener)
+	}
+
 	removeListener(event_name, cb) {
 		if (this.events[event_name]) {
 			this.events[event_name].remove(cb);
