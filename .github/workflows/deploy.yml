@@ -37,7 +37,10 @@ jobs:
                   npm install
                   NODE_OPTIONS=--max_old_space_size=4096 npm run prepublish
 
-            - name: Deploy 🚀
-              run: |
-                  git fetch --no-tags --depth=1 origin gh_pages
-                  npm run webapp
+             - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@3.7.1
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  BRANCH: gh-pages
+                  FOLDER: .
+                  CLEAN: true
