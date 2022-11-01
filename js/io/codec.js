@@ -29,11 +29,14 @@ class Codec {
 		if (!add) {
 			setupProject(this.format)
 		}
+		// Always set export_path
+		Project.export_path = file.path;
+
 		if (file.path && isApp && this.remember && !file.no_file ) {
 			var name = pathToName(file.path, true);
 			let project = Project;
 			Project.name = pathToName(name, false);
-			Project.export_path = file.path;
+			
 			
 			addRecentProject({
 				name,
@@ -55,6 +58,11 @@ class Codec {
 		return '';
 	}
 	export() {
+		if(bridge.connected && Project.export_path) {
+			bridge.writeFile(Project.export_path, this.compile({raw: false}))
+			return;
+		}
+		
 		var scope = this;
 		Blockbench.export({
 			resource_id: 'model',

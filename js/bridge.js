@@ -12,7 +12,6 @@ async function connectToBridge() {
     api.on('app.buildInfo', data => console.log(data))
     
     api.on('tab.openFile', async ({ fileReference, filePath }) => {
-        console.log(fileReference)
         const fileContent = await api.trigger('fs.readTextFile', fileReference)
     
         // Load other connected files such as textures and animations after model was parsed
@@ -44,7 +43,6 @@ if(window.top) await connectToBridge()
 async function loadConnectedTexture() {
     const geometryId = `geometry.${Project.model_identifier}`
     const clientEntity = await findClientEntity(geometryId)
-    console.log(clientEntity)
     
     if(clientEntity) {
         // Load textures
