@@ -102,7 +102,7 @@
 		"beta": "electron-builder --windows portable",
 		"pwa": "node ./scripts/generate_pwa.js",
 		"prepublish": "npm run bundle && npm run pwa",
-		"webapp": "git checkout -b gh_pages && git merge master && git push && git checkout master"
+		"webapp": "git checkout -b gh-pages && git merge master && git push && git checkout master"
 	},
 	"devDependencies": {
 		"blockbench-types": "^4.0.0",
