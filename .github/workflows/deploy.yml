@@ -10,9 +10,7 @@ jobs:
             - name: Checkout 🛎️
               uses: actions/checkout@v2.3.1
               with:
-                  persist-credentials: false
-              run: |
-                  git fetch --no-tags --depth=1 origin gh_pages
+                  persist-credentials: false                  
 
             - name: Install Node 🧰
               uses: actions/setup-node@v2
@@ -41,4 +39,5 @@ jobs:
 
             - name: Deploy 🚀
               run: |
+                  git fetch --no-tags --depth=1 origin gh_pages
                   npm run webapp
