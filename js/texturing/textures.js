@@ -1074,7 +1074,7 @@ class Texture {
 		}
 		return link;
 	}
-	save(as) {
+	async save(as) {
 		var scope = this;
 		if (scope.saved && !as) {
 			return this;
@@ -1120,6 +1120,10 @@ class Texture {
 					scope.fromPath(path)
 				})
 			}
+		} else if(bridge.connected && this.path) {
+			// Use bridge. APIs for saving if possible
+			const uint8array = new Uint8Array(await fetch(scope.source).then(r => r.arrayBuffer()));
+			await bridge.writeFile(this.path, uint8array);
 		} else {
 			//Download
 			Blockbench.export({

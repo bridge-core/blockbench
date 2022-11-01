@@ -772,7 +772,8 @@ class Animation {
 		}}
 	])
 	new Property(Animation, 'boolean', 'saved', {default: true, condition: () => Format.animation_files})
-	new Property(Animation, 'string', 'path', {condition: () => isApp && Format.animation_files})
+	// Path is also valid if bridge. is connected
+	new Property(Animation, 'string', 'path', {condition: () => bridge.connected || isApp && Format.animation_files})
 	new Property(Animation, 'molang', 'anim_time_update', {default: ''});
 	new Property(Animation, 'molang', 'blend_weight', {default: ''});
 	new Property(Animation, 'molang', 'start_delay', {default: ''});
@@ -792,7 +793,7 @@ Blockbench.on('finish_edit', event => {
 	}
 })
 
-
+// TODO: Support loading proper particle textures
 const WinterskyScene = new Wintersky.Scene({
 	fetchTexture: isApp && function(config) {
 		if (config.preview_texture) {
@@ -1396,7 +1397,7 @@ const Animator = {
 			});
 		}
 	},
-	exportAnimationFile(path) {
+	async exportAnimationFile(path) {
 		let filter_path = path || '';
 
 		if (isApp && !path) {
@@ -1415,6 +1416,10 @@ const Animator = {
 					a.save();
 				}
 			})
+		} else if(bridge.connected && filter_path !== '') {
+			// Use bridge. API for writing files when available
+			const content = Animator.buildFile(filter_path, true);
+			await bridge.writeFile(filter_path, autoStringify(content))
 		} else {
 			let content = Animator.buildFile(filter_path, true);
 			Blockbench.export({

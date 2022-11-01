@@ -408,6 +408,11 @@ var codec = new Codec('bedrock_old', {
 		})
 	},
 	export() {
+		if(bridge.connected && Project.export_path) {
+			bridge.writeFile(Project.export_path, this.compile({raw: false}))
+			return;
+		}
+
 		var scope = this;
 		Blockbench.export({
 			resource_id: 'model',

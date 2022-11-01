@@ -42,8 +42,8 @@ function setupDragHandlers() {
 }
 
 function loadModelFile(file) {
-	
-	let existing_tab = isApp && ModelProject.all.find(project => (
+	// Make sure that the same model is only opened once at a time
+	let existing_tab = (isApp || bridge.connected) && ModelProject.all.find(project => (
 		project.save_path == file.path || project.export_path == file.path
 	))
 
@@ -712,6 +712,19 @@ BARS.defineActions(function() {
 				if (Format.animation_mode && Format.animation_files && Animation.all.length) {
 					BarItems.save_all_animations.trigger();
 				}
+			} else if(bridge.connected) {
+				console.log(Project, Format.codec)
+				saveTextures()
+
+				if (Format.codec && Format.codec.export) {
+					Format.codec.export()
+				}
+
+				if (Format.animation_mode && Format.animation_files && Animation.all.length) {
+					BarItems.save_all_animations.trigger();
+				}
+
+				Project.saved = true
 			} else {
 				saveTextures()
 				if (Format.codec && Format.codec.export) {

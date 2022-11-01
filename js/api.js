@@ -10,6 +10,18 @@ const Blockbench = {
 	},
 	version: appVersion,
 	platform: 'web',
+	// Blockbench.platform returns 'web' on the web which is not desirable
+	// to e.g. set up correct keybindings
+	realPlatform: (function platform() {
+		const platform = navigator.platform.toLowerCase()
+		if (platform.includes('win')) return 'win32'
+		else if (platform.includes('linux')) return 'linux'
+		else if (platform.includes('mac')) return 'darwin'
+	
+		console.error(`Unknown platform: ${platform}`)
+		return 'win32'
+	
+	})(),
 	flags: [],
 	drag_handlers: {},
 	events: {},

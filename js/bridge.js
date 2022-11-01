@@ -2,11 +2,16 @@ import { Channel } from "https://cdn.jsdelivr.net/npm/bridge-iframe-api@0.4.11/d
 
 const api = new Channel()
 
+window.bridge = {
+    connected: false,
+    writeFile: () => {}
+}
+
+
 async function connectToBridge() {
     api.on('app.buildInfo', data => console.log(data))
     
     api.on('tab.openFile', async ({ fileReference, filePath }) => {
-        console.log(fileReference)
         const fileContent = await api.trigger('fs.readTextFile', fileReference)
     
         // Load other connected files such as textures and animations after model was parsed
@@ -19,6 +24,15 @@ async function connectToBridge() {
     })
 
     await api.connect()
+    window.bridge = {
+        connected: true,
+        writeFile: async (filePath, data) => {
+            await Promise.all([
+                api.trigger('fs.writeFile', {filePath, data}),
+                api.trigger('dash.updateFile', filePath)
+            ])
+        }
+    }
 
     // Sync unsaved status
     Blockbench.on('saved_state_changed', async () => {
@@ -34,7 +48,6 @@ if(window.top) await connectToBridge()
 async function loadConnectedTexture() {
     const geometryId = `geometry.${Project.model_identifier}`
     const clientEntity = await findClientEntity(geometryId)
-    console.log(clientEntity)
     
     if(clientEntity) {
         // Load textures
