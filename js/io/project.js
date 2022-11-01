@@ -110,6 +110,8 @@ class ModelProject {
 	}
 	set saved(saved) {
 		this._saved = saved;
+
+		Blockbench.dispatchEvent('saved_state_changed', { project: this, saved: saved });
 		if (Project == this) {
 			setProjectTitle(this.name);
 		}

@@ -1,10 +1,8 @@
-import { Channel } from "https://cdn.jsdelivr.net/npm/bridge-iframe-api@0.4.7/dist/bridge-iframe-api.es.js"
+import { Channel } from "https://cdn.jsdelivr.net/npm/bridge-iframe-api@0.4.11/dist/bridge-iframe-api.es.js"
 
 const api = new Channel()
 
 async function connectToBridge() {
-    await api.connect()
-    
     api.on('app.buildInfo', data => console.log(data))
     
     api.on('tab.openFile', async ({ fileReference, filePath }) => {
@@ -12,11 +10,21 @@ async function connectToBridge() {
         const fileContent = await api.trigger('fs.readTextFile', fileReference)
     
         // Load other connected files such as textures and animations after model was parsed
+        // TODO: Clear listener which didn't trigger, otherwise it will be called multiple times
         Codecs.bedrock.once('parsed', () => loadConnectedTexture())
         Codecs.bedrock_old.once('parsed', () => loadConnectedTexture())        
 
         // Load in model
         loadModelFile({ content: fileContent, path: filePath })
+    })
+
+    await api.connect()
+
+    // Sync unsaved status
+    Blockbench.on('saved_state_changed', async () => {
+        const hasUnsavedProjects = ModelProject.all.find(project => !project.saved) !== undefined;
+
+        await api.trigger('tab.setIsUnsaved', hasUnsavedProjects)
     })
 }
 
