@@ -2,6 +2,12 @@ import { Channel } from "https://cdn.jsdelivr.net/npm/bridge-iframe-api@0.4.11/d
 
 const api = new Channel()
 
+window.bridge = {
+    connected: false,
+    writeFile: () => {}
+}
+
+
 async function connectToBridge() {
     api.on('app.buildInfo', data => console.log(data))
     
@@ -19,6 +25,10 @@ async function connectToBridge() {
     })
 
     await api.connect()
+    window.bridge = {
+        connected: true,
+        writeFile: (filePath, data) => api.trigger('fs.writeFile', {filePath, data})
+    }
 
     // Sync unsaved status
     Blockbench.on('saved_state_changed', async () => {
