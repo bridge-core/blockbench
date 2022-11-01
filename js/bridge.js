@@ -26,7 +26,12 @@ async function connectToBridge() {
     await api.connect()
     window.bridge = {
         connected: true,
-        writeFile: (filePath, data) => api.trigger('fs.writeFile', {filePath, data})
+        writeFile: async (filePath, data) => {
+            await Promise.all([
+                api.trigger('fs.writeFile', {filePath, data}),
+                api.trigger('dash.updateFile', filePath)
+            ])
+        }
     }
 
     // Sync unsaved status
