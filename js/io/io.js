@@ -713,7 +713,6 @@ BARS.defineActions(function() {
 					BarItems.save_all_animations.trigger();
 				}
 			} else if(bridge.connected) {
-				console.log(Project, Format.codec)
 				saveTextures()
 
 				if (Format.codec && Format.codec.export) {
