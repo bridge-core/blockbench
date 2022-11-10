@@ -5,17 +5,21 @@ on:
     workflow_dispatch:
 jobs:
     build-and-deploy:
-        runs-on: macos-latest
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout 🛎️
-              uses: actions/checkout@v2.3.1
-              with:
-                  persist-credentials: false                  
+              uses: actions/checkout@v3   
+
+            - name: Setup Pages 📃
+              uses: actions/configure-pages@v2
 
             - name: Install Node 🧰
               uses: actions/setup-node@v2
               with:
-                  node-version: '14'
+                  node-version: '16'
 
             - name: Cache node modules 📖
               uses: actions/cache@v2
@@ -30,17 +34,15 @@ jobs:
                       ${{ runner.os }}-
 
             - name: Install and Build 🔧
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   npm install
                   NODE_OPTIONS=--max_old_space_size=4096 npm run prepublish
 
-            - name: Deploy 🚀
-              uses: JamesIves/github-pages-deploy-action@3.7.1
+            - name: Upload artifact ⬆️
+              uses: actions/upload-pages-artifact@v1
               with:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  BRANCH: gh-pages
-                  FOLDER: .
-                  CLEAN: true
+                path: '.'
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v1
