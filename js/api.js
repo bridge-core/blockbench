@@ -2,6 +2,8 @@ const LastVersion = localStorage.getItem('last_version') || localStorage.getItem
 
 const Blockbench = {
 	isWeb: !isApp,
+	// Check for localhost
+	isDevEnv: window.location.hostname === 'localhost',
 	isMobile: (window.innerWidth <= 960 || window.innerHeight <= 500) && 'ontouchend' in document,
 	isLandscape: window.innerWidth > window.innerHeight,
 	isTouch: 'ontouchend' in document,

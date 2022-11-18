@@ -644,29 +644,31 @@ BARS.defineActions(function() {
 			})
 		}
 	})
-	// Disabled due to CORS
-	// new Action('open_from_link', {
-	// 	icon: 'link',
-	// 	category: 'file',
-	// 	click() {
-	// 		Blockbench.textPrompt('action.open_from_link', '', link => {
-	// 			if (link.match(/https:\/\/blckbn.ch\//) || link.length == 4 || link.length == 6) {
-	// 				let code = link.replace(/\/$/, '').split('/').last();
-	// 				$.getJSON(`https://blckbn.ch/api/models/${code}`, (model) => {
-	// 					Codecs.project.load(model, {path: ''});
-	// 				}).fail(error => {
-	// 					Blockbench.showQuickMessage('message.invalid_link')
-	// 				})
-	// 			} else {
-	// 				$.getJSON(link, (model) => {
-	// 					Codecs.project.load(model, {path: ''});
-	// 				}).fail(error => {
-	// 					Blockbench.showQuickMessage('message.invalid_link')
-	// 				})
-	// 			}
-	// 		}, 'https://blckbn.ch/123abc')
-	// 	}
-	// })
+
+	if(!Blockbench.isDevEnv) {
+		new Action('open_from_link', {
+			icon: 'link',
+			category: 'file',
+			click() {
+				Blockbench.textPrompt('action.open_from_link', '', link => {
+					if (link.match(/https:\/\/blckbn.ch\//) || link.length == 4 || link.length == 6) {
+						let code = link.replace(/\/$/, '').split('/').last();
+						$.getJSON(`https://blckbn.ch/api/models/${code}`, (model) => {
+							Codecs.project.load(model, {path: ''});
+						}).fail(error => {
+							Blockbench.showQuickMessage('message.invalid_link')
+						})
+					} else {
+						$.getJSON(link, (model) => {
+							Codecs.project.load(model, {path: ''});
+						}).fail(error => {
+							Blockbench.showQuickMessage('message.invalid_link')
+						})
+					}
+				}, 'https://blckbn.ch/123abc')
+			}
+		})
+	}
 	new Action('extrude_texture', {
 		icon: 'eject',
 		category: 'file',
@@ -766,91 +768,93 @@ BARS.defineActions(function() {
 	})
 
 	// Disabled due to CORS
-	// new Action('share_model', {
-	// 	icon: 'share',
-	// 	condition: () => Outliner.elements.length,
-	// 	async click() {
-	// 		let thumbnail = await new Promise(resolve => {
-	// 			Preview.selected.screenshot({width: 640, height: 480}, resolve);
-	// 		});
-	// 		let image = new Image();
-	// 		image.src = thumbnail;
-	// 		image.width = 320;
-	// 		image.style.display = 'block';
-	// 		image.style.margin = 'auto';
-	// 		image.style.backgroundColor = 'var(--color-back)';
+	if(!Blockbench.isDevEnv) {
+		new Action('share_model', {
+			icon: 'share',
+			condition: () => Outliner.elements.length,
+			async click() {
+				let thumbnail = await new Promise(resolve => {
+					Preview.selected.screenshot({width: 640, height: 480}, resolve);
+				});
+				let image = new Image();
+				image.src = thumbnail;
+				image.width = 320;
+				image.style.display = 'block';
+				image.style.margin = 'auto';
+				image.style.backgroundColor = 'var(--color-back)';
 
-	// 		var dialog = new Dialog({
-	// 			id: 'share_model',
-	// 			title: 'dialog.share_model.title',
-	// 			form: {
-	// 				name: {type: 'text', label: 'generic.name', value: Project.name},
-	// 				expire_time: {label: 'dialog.share_model.expire_time', type: 'select', default: '2d', options: {
-	// 					'10m': tl('dates.minutes', [10]),
-	// 					'1h': tl('dates.hour', [1]),
-	// 					'1d': tl('dates.day', [1]),
-	// 					'2d': tl('dates.days', [2]),
-	// 					'1w': tl('dates.week', [1]),
-	// 					'2w': tl('dates.weeks', [2]),
-	// 				}},
-	// 				info: {type: 'info', text: 'The model and thumbnail will be stored on the Blockbench servers for the duration specified above. [Learn more](https://blockbench.net/blockbench-model-sharing-service/)'},
-	// 				thumbnail: {type: 'checkbox', label: 'dialog.share_model.thumbnail', value: true},
-	// 			},
-	// 			lines: [image],
-	// 			part_order: ['form', 'lines'],
-	// 			onFormChange(form) {
-	// 				image.style.display = form.thumbnail ? 'block' : 'none';
-	// 			},
-	// 			buttons: ['generic.share', 'dialog.cancel'],
-	// 			onConfirm: function(formResult) {
-	// 				let name = formResult.name;
-	// 				let expire_time = formResult.expire_time;
-	// 				let model = Codecs.project.compile({compressed: false, absolute_paths: false});
-	// 				let data = {name, expire_time, model}
-	// 				if (formResult.thumbnail) data.thumbnail = thumbnail;
+				var dialog = new Dialog({
+					id: 'share_model',
+					title: 'dialog.share_model.title',
+					form: {
+						name: {type: 'text', label: 'generic.name', value: Project.name},
+						expire_time: {label: 'dialog.share_model.expire_time', type: 'select', default: '2d', options: {
+							'10m': tl('dates.minutes', [10]),
+							'1h': tl('dates.hour', [1]),
+							'1d': tl('dates.day', [1]),
+							'2d': tl('dates.days', [2]),
+							'1w': tl('dates.week', [1]),
+							'2w': tl('dates.weeks', [2]),
+						}},
+						info: {type: 'info', text: 'The model and thumbnail will be stored on the Blockbench servers for the duration specified above. [Learn more](https://blockbench.net/blockbench-model-sharing-service/)'},
+						thumbnail: {type: 'checkbox', label: 'dialog.share_model.thumbnail', value: true},
+					},
+					lines: [image],
+					part_order: ['form', 'lines'],
+					onFormChange(form) {
+						image.style.display = form.thumbnail ? 'block' : 'none';
+					},
+					buttons: ['generic.share', 'dialog.cancel'],
+					onConfirm: function(formResult) {
+						let name = formResult.name;
+						let expire_time = formResult.expire_time;
+						let model = Codecs.project.compile({compressed: false, absolute_paths: false});
+						let data = {name, expire_time, model}
+						if (formResult.thumbnail) data.thumbnail = thumbnail;
 
-	// 				$.ajax({
-	// 					url: 'https://blckbn.ch/api/model',
-	// 					data: JSON.stringify(data),
-	// 					cache: false,
-	// 					contentType: 'application/json; charset=utf-8',
-	// 					dataType: 'json',
-	// 					type: 'POST',
-	// 					success: function(response) {
-	// 						let link = `https://blckbn.ch/${response.id}`
+						$.ajax({
+							url: 'https://blckbn.ch/api/model',
+							data: JSON.stringify(data),
+							cache: false,
+							contentType: 'application/json; charset=utf-8',
+							dataType: 'json',
+							type: 'POST',
+							success: function(response) {
+								let link = `https://blckbn.ch/${response.id}`
 
-	// 						let link_dialog = new Dialog({
-	// 							id: 'share_model_link',
-	// 							title: 'dialog.share_model.title',
-	// 							form: {
-	// 								link: {type: 'text', value: link}
-	// 							},
-	// 							buttons: ['action.copy', 'dialog.close'],
-	// 							onConfirm() {
-	// 								link_dialog.hide();
-	// 								if (isApp || navigator.clipboard) {
-	// 									Clipbench.setText(link);
-	// 									Blockbench.showQuickMessage('dialog.share_model.copied_to_clipboard');
-	// 								} else {
-	// 									Blockbench.showMessageBox({
-	// 										title: 'dialog.share_model.title',
-	// 										message: `[${link}](${link})`,
-	// 									})
-	// 								}
-	// 							}
-	// 						}).show();
+								let link_dialog = new Dialog({
+									id: 'share_model_link',
+									title: 'dialog.share_model.title',
+									form: {
+										link: {type: 'text', value: link}
+									},
+									buttons: ['action.copy', 'dialog.close'],
+									onConfirm() {
+										link_dialog.hide();
+										if (isApp || navigator.clipboard) {
+											Clipbench.setText(link);
+											Blockbench.showQuickMessage('dialog.share_model.copied_to_clipboard');
+										} else {
+											Blockbench.showMessageBox({
+												title: 'dialog.share_model.title',
+												message: `[${link}](${link})`,
+											})
+										}
+									}
+								}).show();
 
-	// 					},
-	// 					error: function(response) {
-	// 						Blockbench.showQuickMessage('dialog.share_model.failed', 1500)
-	// 						console.error(response);
-	// 					}
-	// 				})
-		
-	// 				dialog.hide()
-	// 			}
-	// 		})
-	// 		dialog.show()
-	// 	}
-	// })
+							},
+							error: function(response) {
+								Blockbench.showQuickMessage('dialog.share_model.failed', 1500)
+								console.error(response);
+							}
+						})
+			
+						dialog.hide()
+					}
+				})
+				dialog.show()
+			}
+		})
+	}
 })
