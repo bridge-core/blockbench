@@ -1835,7 +1835,6 @@ TextureAnimator = {
 	update(animated_textures) {
 		let maxFrame = 0;
 		animated_textures.forEach(tex => {
-			$(`.texture[texid="${tex.uuid}"]`).find('img').css('margin-top', (tex.currentFrame*-48)+'px');
 			maxFrame = Math.max(maxFrame, tex.currentFrame);
 		})
 		Cube.all.forEach(cube => {
@@ -1854,8 +1853,7 @@ TextureAnimator = {
 		TextureAnimator.stop();
 		Texture.all.forEach(function(tex, i) {
 			if (tex.frameCount) {
-				tex.currentFrame = 0
-				$($('.texture').get(i)).find('img').css('margin-top', '0')
+				tex.currentFrame = 0;
 			} 
 		})
 		UVEditor.img.style.objectPosition = '';
@@ -2094,6 +2092,11 @@ Interface.definePanels(function() {
 						if (tex.frameCount > count) count = tex.frameCount;
 					});
 					return count;
+				},
+				getTextureIconOffset(texture) {
+					if (!texture.currentFrame) return;
+					let val = texture.currentFrame * -48 * (texture.display_height / texture.width);
+					return `${val}px`;
 				}
 			},
 			template: `
@@ -2110,7 +2113,7 @@ Interface.definePanels(function() {
 							@contextmenu.prevent.stop="texture.showContextMenu($event)"
 						>
 							<div class="texture_icon_wrapper">
-								<img v-bind:texid="texture.id" v-bind:src="texture.source" class="texture_icon" width="48px" alt="" v-if="texture.show_icon" />
+								<img v-bind:texid="texture.id" v-bind:src="texture.source" class="texture_icon" width="48px" alt="" v-if="texture.show_icon" :style="{marginTop: getTextureIconOffset(texture)}" />
 								<i class="material-icons texture_error" v-bind:title="texture.getErrorMessage()" v-if="texture.error">error_outline</i>
 								<i class="texture_movie fa fa_big fa-film" title="Animated Texture" v-if="texture.frameCount > 1"></i>
 							</div>

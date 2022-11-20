@@ -1677,7 +1677,6 @@ BARS.defineActions(function() {
 				keys.push(key)
 				form[key.hashCode()] = {label: key, type: 'checkbox', value: true};
 			})
-
 			let dialog = new Dialog({
 				id: 'animation_export',
 				title: 'dialog.animation_export.title',
@@ -1696,6 +1695,16 @@ BARS.defineActions(function() {
 					})
 				}
 			})
+			form.select_all_none = {
+				type: 'buttons',
+				buttons: ['generic.select_all', 'generic.select_none'],
+				click(index) {
+					let values = {};
+					keys.forEach(key => values[key.hashCode()] = (index == 0));
+					dialog.setFormValues(values);
+				}
+			}
+
 			dialog.show();
 		}
 	})
